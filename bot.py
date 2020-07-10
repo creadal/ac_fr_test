@@ -51,13 +51,13 @@ def download_voice(update, context):
 
 def find_face(update, context):
     file = context.bot.getFile(update.message.photo[0].file_id)
-    file.download(update.message.photo.file_id + '.jpg')
+    file.download(update.message.photo[0].file_id + '.jpg')
 
-    image = face_recognition.load_image_file(update.message.photo.file_id + '.jpg')
+    image = face_recognition.load_image_file(update.message.photo[0].file_id + '.jpg')
     face_locations = face_recognition.face_locations(image)
 
     if len(face_locations) == 0:
-        remove(update.message.photo.file_id)
+        remove(update.message.photo[0].file_id + '.jpg')
 
 
 
