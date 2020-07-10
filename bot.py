@@ -8,6 +8,7 @@ import subprocess
 from os import listdir
 from os import remove
 from os.path import isfile, join
+import face_recognition
 
 
 
@@ -48,7 +49,22 @@ def download_voice(update, context):
     remove(src_filename)
 
 
-bruh_handler = MessageHandler(Filters.voice, download_voice)
-dispatcher.add_handler(bruh_handler)
+def find_face(update, context):
+    file = context.bot.getFile(update.message.photo[0].file_id)
+    file.download(update.message.photo.file_id + '.jpg')
+
+    image = face_recognition.load_image_file(update.message.photo.file_id + '.jpg')
+    face_locations = face_recognition.face_locations(image)
+
+    if len(face_locations) == 0:
+        remove(update.message.photo.file_id)
+
+
+
+voice_handler = MessageHandler(Filters.voice, download_voice)
+face_handler = MessageHandler(Filters.photo, find_face)
+
+dispatcher.add_handler(voice_handler)
+dispatcher.add_handler(face_handler)
 
 updater.start_polling()
